@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<!-- thを接頭辞としてThymeleaf機能を有効にする -->
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <link th:href="@{/css/style.css}" rel="styleSheet">
+    <title>edit</title>
+</head>
+<body>
+<div class="header-contents">
+    <h2>編集画面</h2>
+</div>
+<div class="main-contents">
+    <!-- 投稿ボタンを押すとformタグの情報が@PostMapping("/")へ飛ぶ -->
+    <!-- th:objectは@Getmapping("/edit")で画面表示指示された時に受取ったやつ。
+     中身はDBから引っ張ってきた編集対象の投稿情報を持つFormクラス-->
+    <form th:method="put" th:action="@{/update/{id}(id=${formModel.id})}" th:object="${formModel}">
+        <div class="form-area">
+            <label>投稿内容</label>
+            <!-- th:field="*{}"はth:objectで指定されたオブジェクトのフィールドを指定する -->
+            <!-- ここではformModelというキーで渡されたreportFormクラスのフィールドのcontentを指定している -->
+            <textarea class="tweet-box" th:field="*{content}" size="20"
+                      maxlength="200" /></textarea><br/>
+            <input type="submit" value="更新" />
+        </div>
+    </form>
+</div>
+<div class="footer-contents">
+    <form action="/">
+        <input type="submit" value="戻る" />
+    </form>
+</div>
+</body>
+</html>

@@ -24,9 +24,25 @@
         <div class="text">
             投稿 : <span th:text="${content.content}"></span>
         </div>
+        <!-- 編集ボタンを押したらcontrollerへ飛ぶ -->
+        <div class="edit-button">
+            <a th:href="@{/edit/{id}(id=${content.id})}">
+                <input type="submit" value="編集" />
+            </a>
+        </div>
         <!-- 削除ボタンを押したらcontrollerに飛ぶ -->
-        <form method="delete" action="/delete">
-            <input type="submit" value="削除" />
+        <div class="delete-button">
+            <form th:method="delete" th:action="@{/delete/{id}(id=${content.id})}">
+                <input type="submit" value="削除" />
+            </form>
+        </div>
+        <!-- コメント機能を追加 -->
+        <form th:method="post" th:action="@{/comment/{id}(id=${content.id})}" th:object="${commentModel}">
+            <div class="form-area">
+                <label>コメント</label>
+                <textarea class="comment-box" size="20" maxlength="200" th:field="*{comment}"/></textarea><br/>
+                <input type="submit" value="返信" />
+            </div>
         </form>
     </div>
 </div>

@@ -1,13 +1,12 @@
 package com.example.forum.controller;
 
+import com.example.forum.controller.form.CommentForm;
 import com.example.forum.controller.form.ReportForm;
+import com.example.forum.service.CommentService;
 import com.example.forum.service.ReportService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
@@ -20,7 +19,7 @@ public class ForumController {
     ReportService reportService;
 
     /*
-    全投稿内容表示処理
+    全投稿内容を表示する処理
      */
     //GETリクエストを受け取るメソッドであることを明示
     @GetMapping
@@ -29,14 +28,18 @@ public class ForumController {
         ModelAndView mav = new ModelAndView();
         //投稿を全件取得
         List<ReportForm> contentData = reportService.findAllReport();
+        //コメント用の空箱用意
+        CommentForm commentForm = new CommentForm();
         //画面遷移先を指定
         mav.setViewName("/top");
         //ReportForm型のデータを扱う投稿データListをmavに登録
         mav.addObject("contents", contentData);
+        mav.addObject("commentModel", commentForm);
         return mav;
     }
+
     /*
-    新規投稿画面表示
+    新規投稿入力画面を表示する処理
      */
     //Getリクエストに対応するメソッドであることを明示
     @GetMapping("/new")
@@ -52,7 +55,7 @@ public class ForumController {
         return mav;
     }
     /*
-    新規投稿をDBに登録するために流す処理
+    新規投稿をDBに登録するためServiceクラスへ流す処理
      */
     //POSTリクエストに対応したメソッドであることを明示
     @PostMapping("/add")
@@ -63,17 +66,45 @@ public class ForumController {
         //先頭画面(ルート)にリダイレクト
         return new ModelAndView("redirect:/");
     }
+
     /*
     投稿削除するための処理
      */
-    //POSTリクエストに対応したメソッドであることを明示
-    @DeleteMapping("/delete")
+    //DELETEリクエストに対応したメソッドであることを明示
+    @DeleteMapping("/delete/{id}")
     //top.htmlから渡された値を@ModelAttributeで取り出し、reportFormへ詰めている
-    public ModelAndView deleteContent(@ModelAttribute("contents") ReportForm reportForm) {
-        //投稿をテーブルへ格納するためServiceクラスへ流す
-        reportService.deleteReport(reportForm);
+    public ModelAndView deleteContent(@PathVariable Integer id) {
+        //削除処理を行うためServiceクラスへ流す
+        reportService.deleteReport(id);
         //先頭画面(ルート)にリダイレクト
         return new ModelAndView("redirect:/");
     }
-}
 
+    /*
+    投稿編集画面を表示するための処理
+     */
+    //GETリクエストを受付、idを動的に受取る
+    @GetMapping("/edit/{id}")
+    public ModelAndView editContent(@PathVariable Integer id) {
+        //ModelAndViewはviewに渡すデータと渡し先を管理するオブジェクト
+        ModelAndView mav = new ModelAndView();
+        //受取ったidを元に編集する投稿をDBから取得
+        ReportForm report = reportService.editReport(id);
+        //DBから取得した編集対象の投稿をセット
+        mav.addObject("formModel", report);
+        //画面遷移先を指定
+        mav.setViewName("/edit");
+        return mav;
+    }
+    /*
+    投稿を編集するためにServiceクラスへ流す処理
+     */
+    @PutMapping("/update/{id}")
+    public ModelAndView updateContent (@PathVariable Integer id,
+                            @ModelAttribute("formModel") ReportForm report) {
+        report.setId(id);
+        //Serviceクラスへ流す
+        reportService.saveReport(report);
+        return new ModelAndView("redirect:/");
+    }
+}

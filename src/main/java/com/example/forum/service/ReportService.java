@@ -23,13 +23,26 @@ public class ReportService {
     public List<ReportForm> findAllReport() {
         //DBとのやり取りは～entityクラスでやりたいのでReportを指定(Reportは@entityしてたね！)
         //findAllはjpaRepositoryの便利メソッド(SELECT処理)
+        //reportRepository.findAllByOrderByIdDesc();はもし空だったらEntity型の空のリストで返ってくる
         List<Report> results = reportRepository.findAllByOrderByIdDesc();
         //DBから来た情報をFormに詰め替えて保持
         List<ReportForm> reports = setReportForm(results);
         return reports;
     }
     /*
-    Entity→Formに詰め替え処理
+    レコードを1件取得
+     */
+    public ReportForm editReport(Integer id) {
+        List<Report> results = new ArrayList<>();
+        //単一検索なのでOptional型で返ってくる。だからEntity型にキャストする
+        results.add((Report) reportRepository.findById(id).orElse(null));
+        //controllerに渡すためにsetReportFormメソッドを使ってFromクラスに詰替え
+        List<ReportForm> reports = setReportForm(results);
+        //idに合致したやつを拾ってくるから当然1個=インデックス番号0となる
+        return reports.get(0);
+    }
+    /*
+    Entity→Formに詰め替え処理(レコード取得用)
      */
     private List<ReportForm> setReportForm(List<Report> results) {
         //詰替え作業はList型みたいなインターフェースで扱うと保守が楽だよ
@@ -48,6 +61,7 @@ public class ReportService {
         }
         return reports;
     }
+
     /*
     投稿内容をDBに追加処理
      */
@@ -58,16 +72,7 @@ public class ReportService {
         reportRepository.save(saveReport);
     }
     /*
-    投稿内容をDBから削除処理
-     */
-    public void deleteReport(ReportForm reqReport) {
-        //Form→Entityに詰め替えられたを変数に保持
-        Report deletReport = setReportEntity(reqReport);
-        //saveはjpaRepositoryの便利メソッド(INSERT処理)
-        reportRepository.deleteById(deletReport.getId());
-    }
-    /*
-    Form→Entityに詰替え処理
+    Form→Entityに詰替え処理(追加処理用)
      */
     //Reportは@Entityされてたね
     private Report setReportEntity(ReportForm reqReport) {
@@ -75,6 +80,26 @@ public class ReportService {
         Report report = new Report();
         report.setId(reqReport.getId());
         report.setContent(reqReport.getContent());
+        return report;
+    }
+
+    /*
+    投稿内容をDBから削除処理
+     */
+    public void deleteReport(Integer id) {
+        //Form→Entityに詰め替えられた値を変数に保持
+        Report deletReport = setReportEntity(id);
+        //saveはjpaRepositoryの便利メソッド(INSERT処理)
+        reportRepository.deleteById(deletReport.getId());
+    }
+    /*
+    Form→Entityに詰替え処理(削除処理用)
+     */
+    //Reportは@Entityされてたね
+    private Report setReportEntity(Integer id) {
+        //詰替え先のEntityオブジェクトを生成
+        Report report = new Report();
+        report.setId(id);
         return report;
     }
 }
