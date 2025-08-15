@@ -15,6 +15,11 @@
     <a href="/new">
         <button class="new-button" type="button">新規投稿</button>
     </a>
+    <!-- 絞込ボタン -->
+    <form>
+        <span>開始日</span>
+        <input type="date" th:filed="{}">
+    </form>
 
     <!-- controllerから渡ってきた投稿データListから値を取り出して表示 -->
     <div class="message-icon" th:each="content : ${contents}">
@@ -36,11 +41,32 @@
                 <input type="submit" value="削除" />
             </form>
         </div>
+        <!-- 返信を表示 -->
+        <div th:each="comment : ${comments}">
+            <div class="comment" th:if="${content.id} == ${comment.content_id}">
+                返信 :<br/>
+                <span th:text="${comment.comment}"></span>
+                <!-- コメント編集ボタンを押したらcontrollerへ飛ぶ -->
+                <div class="edit-button">
+                    <a th:href="@{/commentEdit/{id}(id=${comment.id})}">
+                        <input type="submit" value="編集" />
+                    </a>
+                </div>
+                <!-- コメント削除ボタン -->
+                <div class="delete-button">
+                    <form th:method="delete" th:action="@{/deleteComment/{id}(id=${comment.id})}">
+                        <input type="submit" value="削除" />
+                    </form>
+                </div>
+            </div>
+        </div>
         <!-- コメント機能を追加 -->
-        <form th:method="post" th:action="@{/comment/{id}(id=${content.id})}" th:object="${commentModel}">
+        <form th:method="post" th:action="@{/comment/{content_id}(content_id=${content.id})}"
+              th:object="${commentModel}">
             <div class="form-area">
                 <label>コメント</label>
-                <textarea class="comment-box" size="20" maxlength="200" th:field="*{comment}"/></textarea><br/>
+                <textarea class="comment-box" size="20" maxlength="200"
+                          th:field="*{comment}"/></textarea><br/>
                 <input type="submit" value="返信" />
             </div>
         </form>

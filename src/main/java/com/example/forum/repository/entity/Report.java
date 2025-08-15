@@ -8,6 +8,9 @@ import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.sql.Timestamp;
+import java.util.Date;
+
 //DBアクセス時に使用する入れ物クラス。Entityクラスは基本DBのテーブルと1:1対応する
 //入れ物の役割であるEntityを明示
 @Entity
@@ -28,4 +31,10 @@ public class Report {
     //DBテーブルのカラムに対応(プロパティそれぞれにつける)
     @Column
     private String content;
+
+    @Column
+    private Date created_date;
+
+    @Column
+    private Date updated_date;
 }

@@ -8,6 +8,8 @@ import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.Date;
+
 @Entity
 @Table(name = "comment")
 @Getter
@@ -23,4 +25,10 @@ public class Comment {
 
     @Column
     private String comment;
+
+    @Column
+    private Date created_date;
+
+    @Column
+    private Date updated_date;
 }

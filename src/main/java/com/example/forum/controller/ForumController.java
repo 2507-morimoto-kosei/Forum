@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+import org.thymeleaf.model.IComment;
 
 import java.util.List;
 
@@ -17,6 +18,9 @@ public class ForumController {
     //被依存先であると明示(ReportServiceインスタンスが自動注入される)
     @Autowired
     ReportService reportService;
+
+    @Autowired
+    CommentService CommentService;
 
     /*
     全投稿内容を表示する処理
@@ -28,13 +32,18 @@ public class ForumController {
         ModelAndView mav = new ModelAndView();
         //投稿を全件取得
         List<ReportForm> contentData = reportService.findAllReport();
+        //返信を全件取得
+        List<CommentForm> commentData = CommentService.findAllComment();
         //コメント用の空箱用意
         CommentForm commentForm = new CommentForm();
         //画面遷移先を指定
         mav.setViewName("/top");
         //ReportForm型のデータを扱う投稿データListをmavに登録
         mav.addObject("contents", contentData);
+        //コメント用の空箱をmovに登録
         mav.addObject("commentModel", commentForm);
+        //DBから取得した返信データListをmavに登録
+        mav.addObject("comments", commentData);
         return mav;
     }
 
