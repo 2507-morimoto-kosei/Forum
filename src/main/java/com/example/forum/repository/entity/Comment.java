@@ -8,6 +8,8 @@ import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Entity
@@ -26,9 +28,9 @@ public class Comment {
     @Column
     private String comment;
 
-    @Column
-    private Date created_date;
+    @Column(name = "created_date")
+    private LocalDateTime createdDate;
 
-    @Column
-    private Date updated_date;
+    @Column(name = "updated_date")
+    private LocalDateTime updatedDate;
 }

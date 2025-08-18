@@ -2,6 +2,7 @@ package com.example.forum.controller;
 
 import com.example.forum.controller.form.CommentForm;
 import com.example.forum.controller.form.ReportForm;
+import com.example.forum.controller.form.SearchForm;
 import com.example.forum.service.CommentService;
 import com.example.forum.service.ReportService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,10 +37,38 @@ public class ForumController {
         List<CommentForm> commentData = CommentService.findAllComment();
         //コメント用の空箱用意
         CommentForm commentForm = new CommentForm();
+        //投稿絞込用の空箱用意
+        SearchForm searchForm = new SearchForm();
         //画面遷移先を指定
         mav.setViewName("/top");
         //ReportForm型のデータを扱う投稿データListをmavに登録
         mav.addObject("contents", contentData);
+        //コメント用の空箱をmovに登録
+        mav.addObject("commentModel", commentForm);
+        //投稿絞込用の空箱をmovに登録
+        mav.addObject("SearchModel", searchForm);
+        //DBから取得した返信データListをmavに登録
+        mav.addObject("comments", commentData);
+        return mav;
+    }
+
+    /*
+    絞込日時に応じて画面表示
+     */
+    @GetMapping("/search")
+    public ModelAndView select(@ModelAttribute("SearchModel") SearchForm search) {
+        //viewに渡すデータ(Model)と渡す先(view)指定をまとめて管理するクラス
+        ModelAndView mav = new ModelAndView();
+        //日付の範囲の投稿を取得
+        List<ReportForm> searchData = reportService.findSearchReport(search);
+        //全部の返信を取得(Viewで疑似的に条件分岐させてるよ)
+        List<CommentForm> commentData = CommentService.findAllComment();
+        //コメント用の空箱用意
+        CommentForm commentForm = new CommentForm();
+        //画面遷移先を指定
+        mav.setViewName("/top");
+        //ReportForm型のデータを扱う投稿データListをmavに登録
+        mav.addObject("contents", searchData);
         //コメント用の空箱をmovに登録
         mav.addObject("commentModel", commentForm);
         //DBから取得した返信データListをmavに登録

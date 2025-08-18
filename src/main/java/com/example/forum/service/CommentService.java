@@ -8,6 +8,7 @@ import com.example.forum.repository.entity.Report;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,7 +21,10 @@ public class CommentService {
     投稿内容をDBに追加処理
      */
     public void saveComment(CommentForm reqComment) {
-        //Form→Entityに詰め替えられたを変数に保持
+        //時間情報を追加
+        reqComment.setCreated_date(LocalDateTime.now());
+        reqComment.setUpdated_date(LocalDateTime.now());
+        //Form→Entityに詰め替えて値を変数に保持
         Comment saveComment = setCommentEntity(reqComment);
         //saveはjpaRepositoryの便利メソッド(INSERTまたはUPDATE処理)
         commentRepository.save(saveComment);
@@ -28,13 +32,15 @@ public class CommentService {
     /*
     Form→Entityに詰替え処理(追加処理用)
      */
-    //Reportは@Entityされてたね
+    //Commentはエンティティクラス
     private Comment setCommentEntity(CommentForm reqComment) {
         //詰替え先のEntityオブジェクトを生成
         Comment comment = new Comment();
         comment.setId(reqComment.getId());
         comment.setContent_id(reqComment.getContent_id());
         comment.setComment(reqComment.getComment());
+        comment.setCreatedDate(reqComment.getCreated_date());
+        comment.setUpdatedDate(reqComment.getUpdated_date());
         return comment;
     }
 

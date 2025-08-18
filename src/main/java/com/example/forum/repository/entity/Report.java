@@ -9,6 +9,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 //DBアクセス時に使用する入れ物クラス。Entityクラスは基本DBのテーブルと1:1対応する
@@ -32,9 +34,9 @@ public class Report {
     @Column
     private String content;
 
-    @Column
-    private Date created_date;
+    @Column(name = "created_date")
+    private LocalDateTime createdDate;
 
-    @Column
-    private Date updated_date;
+    @Column(name = "updated_date")
+    private LocalDateTime updatedDate;
 }

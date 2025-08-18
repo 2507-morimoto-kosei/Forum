@@ -1,11 +1,14 @@
 package com.example.forum.service;
 
 import com.example.forum.controller.form.ReportForm;
+import com.example.forum.controller.form.SearchForm;
 import com.example.forum.repository.ReportRepository;
 import com.example.forum.repository.entity.Report;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,7 +24,6 @@ public class ReportService {
      */
     //controllerやviewで使うデータなので～FormクラスとしてListで管理
     public List<ReportForm> findAllReport() {
-        //DBとのやり取りは～entityクラスでやりたいのでReportを指定(Reportは@entityしてたね！)
         //findAllはjpaRepositoryの便利メソッド(SELECT処理)
         //reportRepository.findAllByOrderByIdDesc();はもし空だったらEntity型の空のリストで返ってくる
         List<Report> results = reportRepository.findAllByOrderByIdDesc();
@@ -42,6 +44,19 @@ public class ReportService {
         return reports.get(0);
     }
     /*
+    絞込日に合わせて取得
+     */
+    public List<ReportForm> findSearchReport(SearchForm search) {
+        //DBがTIMESTAMP型で日時情報を扱うので、対応できるように変換
+        LocalDateTime startDate = search.getStartDate().atStartOfDay();
+        LocalDateTime endDate = search.getEndDate().atTime(LocalTime.MAX);
+        //開始日と終了日に合わせた投稿をDBから取得
+        List<Report> results = reportRepository.findBycreatedDateBetween(startDate, endDate);
+        //controllerに渡すためにsetReportFormメソッドを使ってFromクラスに詰替え
+        List<ReportForm> reports = setReportForm(results);
+        return reports;
+    }
+    /*
     Entity→Formに詰め替え処理(レコード取得用)
      */
     private List<ReportForm> setReportForm(List<Report> results) {
@@ -56,6 +71,8 @@ public class ReportService {
             //Listで管理するForm箱に値をセット
             report.setId(result.getId());
             report.setContent(result.getContent());
+            report.setCreated_date(result.getCreatedDate());
+            report.setUpdated_date(result.getUpdatedDate());
             //Listに追加
             reports.add(report);
         }
@@ -66,6 +83,9 @@ public class ReportService {
     投稿内容をDBに追加処理
      */
     public void saveReport(ReportForm reqReport) {
+        //日時情報の付与
+        reqReport.setCreated_date(LocalDateTime.now());
+        reqReport.setUpdated_date(LocalDateTime.now());
         //Form→Entityに詰め替えられたを変数に保持
         Report saveReport = setReportEntity(reqReport);
         //saveはjpaRepositoryの便利メソッド(INSERT処理)
@@ -80,6 +100,8 @@ public class ReportService {
         Report report = new Report();
         report.setId(reqReport.getId());
         report.setContent(reqReport.getContent());
+        report.setCreatedDate(reqReport.getCreated_date());
+        report.setUpdatedDate(reqReport.getUpdated_date());
         return report;
     }
 

@@ -15,10 +15,17 @@
     <a href="/new">
         <button class="new-button" type="button">新規投稿</button>
     </a>
+
     <!-- 絞込ボタン -->
-    <form>
-        <span>開始日</span>
-        <input type="date" th:filed="{}">
+    <form th:method="get" th:action="@{/search}" th:object="${SearchModel}">
+        <span>開始日<input type="date" th:field="*{startDate}"/></span>
+        <span>終了日<input type="date" th:field="*{endDate}"/></span>
+        <input type="submit" value="絞込" />
+    </form>
+
+    <!-- 絞込リセットボタン -->
+    <form action="/">
+        <input type="submit" value="絞込リセット" />
     </form>
 
     <!-- controllerから渡ってきた投稿データListから値を取り出して表示 -->
@@ -45,7 +52,7 @@
         <div th:each="comment : ${comments}">
             <div class="comment" th:if="${content.id} == ${comment.content_id}">
                 返信 :<br/>
-                <span th:text="${comment.comment}"></span>
+                <span th:text="${comment.comment}"></span><br/>
                 <!-- コメント編集ボタンを押したらcontrollerへ飛ぶ -->
                 <div class="edit-button">
                     <a th:href="@{/commentEdit/{id}(id=${comment.id})}">
