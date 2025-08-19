@@ -7,6 +7,9 @@ import com.example.forum.service.CommentService;
 import com.example.forum.service.ReportService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.thymeleaf.model.IComment;
@@ -97,8 +100,15 @@ public class ForumController {
      */
     //POSTリクエストに対応したメソッドであることを明示
     @PostMapping("/add")
-    //new.htmlから渡された値を@ModelAttributeで取り出し、reportFormへ詰めている
-    public ModelAndView addContent(@ModelAttribute("formModel") ReportForm reportForm) {
+    //BindingResultクラスはバリデーションの結果を保持するクラス。ValidationのModelAndView版みたいな
+    public ModelAndView addContent(@ModelAttribute("formModel") @Validated ReportForm reportForm, BindingResult result) {
+        //入力不備があるか確認
+        if(result.hasErrors()) {
+            //もしあれば新規投稿編集画面に突き返す
+            ModelAndView mav = new ModelAndView();
+            mav.setViewName("/new");
+            return mav;
+        }
         //投稿をテーブルへ格納するためServiceクラスへ流す
         reportService.saveReport(reportForm);
         //先頭画面(ルート)にリダイレクト

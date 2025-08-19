@@ -2,7 +2,9 @@ package com.example.forum.controller;
 
 import com.example.forum.controller.form.CommentForm;
 import com.example.forum.controller.form.ReportForm;
+import com.example.forum.repository.entity.Report;
 import com.example.forum.service.CommentService;
+import com.example.forum.service.ReportService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -13,13 +15,21 @@ public class CommentController {
     @Autowired
     CommentService commentService;
 
+    @Autowired
+    ReportService reportService;
+
     /*
     返信をDBに登録するためServiceクラスへ流す処理
      */
     @PostMapping("/comment/{content_id}")
     public ModelAndView addContent(@PathVariable Integer content_id,
             @ModelAttribute("commentModel") CommentForm commentForm) {
+        //コメントをDBに登録する
         commentService.saveComment(commentForm);
+
+        //contentIDを引数に投稿の更新日時を変更するメソッドを起動
+        reportService.updateDateReport(content_id);
+
         //先頭画面(ルート)にリダイレクト
         return new ModelAndView("redirect:/");
     }
@@ -52,6 +62,9 @@ public class CommentController {
         return new ModelAndView("redirect:/");
     }
 
+    /*
+    コメントを削除するためにServiceクラスへ流す処理
+     */
     @DeleteMapping("/deleteComment/{id}")
     public ModelAndView deleteContent(@PathVariable Integer id) {
         //削除処理を行うためServiceクラスへ流す

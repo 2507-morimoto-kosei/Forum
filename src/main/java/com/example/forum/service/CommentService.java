@@ -3,6 +3,7 @@ package com.example.forum.service;
 import com.example.forum.controller.form.CommentForm;
 import com.example.forum.controller.form.ReportForm;
 import com.example.forum.repository.CommentRepository;
+import com.example.forum.repository.ReportRepository;
 import com.example.forum.repository.entity.Comment;
 import com.example.forum.repository.entity.Report;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,18 +18,23 @@ public class CommentService {
     @Autowired
     CommentRepository commentRepository;
 
+    @Autowired
+    ReportRepository reportRepository;
+
     /*
-    投稿内容をDBに追加処理
+    返信内容をDBに追加処理
      */
     public void saveComment(CommentForm reqComment) {
         //時間情報を追加
         reqComment.setCreated_date(LocalDateTime.now());
         reqComment.setUpdated_date(LocalDateTime.now());
+
         //Form→Entityに詰め替えて値を変数に保持
         Comment saveComment = setCommentEntity(reqComment);
         //saveはjpaRepositoryの便利メソッド(INSERTまたはUPDATE処理)
         commentRepository.save(saveComment);
     }
+
     /*
     Form→Entityに詰替え処理(追加処理用)
      */

@@ -26,7 +26,7 @@ public class ReportService {
     public List<ReportForm> findAllReport() {
         //findAllはjpaRepositoryの便利メソッド(SELECT処理)
         //reportRepository.findAllByOrderByIdDesc();はもし空だったらEntity型の空のリストで返ってくる
-        List<Report> results = reportRepository.findAllByOrderByIdDesc();
+        List<Report> results = reportRepository.findAllByOrderByUpdatedDateDesc();
         //DBから来た情報をFormに詰め替えて保持
         List<ReportForm> reports = setReportForm(results);
         return reports;
@@ -91,10 +91,27 @@ public class ReportService {
         //saveはjpaRepositoryの便利メソッド(INSERT処理)
         reportRepository.save(saveReport);
     }
+
+    /*
+    投稿のupdate_dateだけ変更したい
+    */
+    public void updateDateReport(Integer id) {
+        //変更予定の投稿を取得
+        List<Report> results = new ArrayList<>();
+        //単一検索なのでOptional型で返ってくる。だからEntity型にキャストする
+        results.add((Report) reportRepository.findById(id).orElse(null));
+        //時間情報の付与
+        Report updateDateReport = results.get(0);
+        updateDateReport.setUpdatedDate(LocalDateTime.now());
+
+        //saveはjpaRepositoryの便利メソッド(INSERT処理)
+        reportRepository.save(updateDateReport);
+    }
+
     /*
     Form→Entityに詰替え処理(追加処理用)
      */
-    //Reportは@Entityされてたね
+    //ReportはEntityクラス
     private Report setReportEntity(ReportForm reqReport) {
         //詰替え先のEntityオブジェクトを生成
         Report report = new Report();
