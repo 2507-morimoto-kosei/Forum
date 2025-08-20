@@ -101,10 +101,11 @@ public class ForumController {
     //POSTリクエストに対応したメソッドであることを明示
     @PostMapping("/add")
     //BindingResultクラスはバリデーションの結果を保持するクラス。ValidationのModelAndView版みたいな
+    //BindingResultクラスは@Validatedとバウンドクラスの直後に記述する
     public ModelAndView addContent(@ModelAttribute("formModel") @Validated ReportForm reportForm, BindingResult result) {
         //入力不備があるか確認
         if(result.hasErrors()) {
-            //もしあれば新規投稿編集画面に突き返す
+            //もしあれば新規投稿作成画面に突き返す
             ModelAndView mav = new ModelAndView();
             mav.setViewName("/new");
             return mav;
@@ -149,8 +150,15 @@ public class ForumController {
      */
     @PutMapping("/update/{id}")
     public ModelAndView updateContent (@PathVariable Integer id,
-                            @ModelAttribute("formModel") ReportForm report) {
+                            @ModelAttribute("formModel") @Validated ReportForm report, BindingResult result) {
         report.setId(id);
+        //入力不備があるか確認
+        if(result.hasErrors()) {
+            //もしあれば新規投稿作成画面に突き返す
+            ModelAndView mav = new ModelAndView();
+            mav.setViewName("/edit");
+            return mav;
+        }
         //Serviceクラスへ流す
         reportService.saveReport(report);
         return new ModelAndView("redirect:/");

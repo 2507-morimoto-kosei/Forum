@@ -21,6 +21,8 @@
             <!-- ここではformModelというキーで渡されたreportFormクラスのフィールドのcontentを指定している -->
             <textarea class="tweet-box" th:field="*{content}" size="20"
                       maxlength="200" /></textarea><br/>
+            <!-- 入力不備があればエラーを表示。("formModel"= reportFormのcontentフィールドを指定)-->
+            <div th:if="${#fields.hasErrors('content')}" th:errors="*{content}"></div>
             <input type="submit" value="更新" />
         </div>
     </form>

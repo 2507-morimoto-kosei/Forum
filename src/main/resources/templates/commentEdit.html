@@ -17,6 +17,8 @@
     <form th:method="put" th:action="@{/updateComment/{id}/{content_id}(id=${commentModel.id}, content_id=${commentModel.content_id})}" th:object="${commentModel}">
         <div class="form-area">
             <label>コメント内容</label>
+            <!-- 入力不備があればエラーを表示。("formModel"= reportFormのcontentフィールドを指定)-->
+            <div th:if="${#fields.hasErrors('comment')}" th:errors="*{comment}"></div>
             <!-- th:field="*{}"はth:objectで指定されたオブジェクトのフィールドを指定する -->
             <!-- ここではformModelというキーで渡されたreportFormクラスのフィールドのcontentを指定している -->
             <textarea class="tweet-box" th:field="*{comment}" size="20"

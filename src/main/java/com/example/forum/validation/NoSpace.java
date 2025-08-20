@@ -6,6 +6,7 @@ import org.hibernate.validator.internal.constraintvalidators.bv.NotBlankValidato
 
 import java.lang.annotation.*;
 
+//ElementType.FIELDはアノテーションをフィールドに付与できることを示す
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented

@@ -68,15 +68,16 @@
             </div>
         </div>
         <!-- コメント機能を追加 -->
-        <form th:method="post" th:action="@{/comment/{content_id}(content_id=${content.id})}"
-              th:object="${commentModel}">
-            <div class="form-area">
-                <label>コメント</label>
-                <textarea class="comment-box" size="20" maxlength="200"
-                          th:field="*{comment}"/></textarea><br/>
-                <input type="submit" value="返信" />
-            </div>
-        </form>
+        <div class="form-area">
+            <form th:method="post" th:action="@{/comment/{content_id}(content_id=${content.id})}" th:object="${commentModel}">
+                    <label>コメント</label>
+                    <!-- 入力不備があればエラーを表示。("formModel"= reportFormのcontentフィールドを指定)-->
+                    <div th:if="${#fields.hasErrors('comment')}" th:errors="*{comment}"></div>
+                    <textarea class="comment-box" size="20" maxlength="200"
+                              th:field="*{comment}"/></textarea><br/>
+                    <input type="submit" value="返信" />
+            </form>
+        </div>
     </div>
 </div>
 </body>
