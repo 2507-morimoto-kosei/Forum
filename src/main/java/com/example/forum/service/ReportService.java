@@ -2,6 +2,7 @@ package com.example.forum.service;
 
 import com.example.forum.controller.form.ReportForm;
 import com.example.forum.controller.form.SearchForm;
+import com.example.forum.mapper.ReportMapper;
 import com.example.forum.repository.ReportRepository;
 import com.example.forum.repository.entity.Report;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,9 @@ public class ReportService {
     @Autowired
     ReportRepository reportRepository;
 
+    @Autowired
+    private ReportMapper reportMapper;
+
     /*
     レコード全件取得処理
      */
@@ -26,11 +30,19 @@ public class ReportService {
     public List<ReportForm> findAllReport() {
         //findAllはjpaRepositoryの便利メソッド(SELECT処理)
         //reportRepository.findAllByOrderByIdDesc();はもし空だったらEntity型の空のリストで返ってくる
-        List<Report> results = reportRepository.findAllByOrderByUpdatedDateDesc();
+        List<Report> results = reportMapper.findAllOrderByupdated_dateDesc();
         //DBから来た情報をFormに詰め替えて保持
         List<ReportForm> reports = setReportForm(results);
         return reports;
     }
+
+//    /*
+//    レコード全件取得処理(MyBatis版)
+//     */
+//    public List<Report> findAllReport {
+//
+//    }
+
     /*
     レコードを1件取得
      */

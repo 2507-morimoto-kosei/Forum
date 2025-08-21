@@ -13,6 +13,6 @@ import java.util.List;
 //引数にDBテーブルと対応しているEntityクラスを指定する
 //ここのRepositoryはインターフェースなことに注意
 public interface ReportRepository extends JpaRepository<Report, Integer> {
-    public List<Report> findAllByOrderByUpdatedDateDesc();
+//    public List<Report> findAllByOrderByUpdatedDateDesc();
     public List<Report> findBycreatedDateBetween(LocalDateTime startDate, LocalDateTime endDate);
 }
